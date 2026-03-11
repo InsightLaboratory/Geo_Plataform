@@ -1,0 +1,18 @@
+# Archivos de sistema
+Thumbs.db
+Desktop.ini
+
+# Archivos temporales
+*.tmp
+*.log
+*.bak
+
+# IDEs / editores
+.vscode/
+.lmstudio/
+.bito/
+__pycache__/
+node_modules/
+
+# Entorno virtual de Python
+api/venv/

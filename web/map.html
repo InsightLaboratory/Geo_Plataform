@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8" />
+
+<title>GeoPlatform Drillholes</title>
+
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<style>
+
+body{
+margin:0;
+}
+
+#map{
+height:100vh;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<script>
+
+// crear mapa
+const map = L.map('map').setView([-31.534, -68.536], 12)
+
+// capa base
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+maxZoom:19
+}).addTo(map)
+
+// pedir datos a la API
+fetch("http://127.0.0.1:8000/geospatial/drillhole-locations")
+
+.then(response => response.json())
+
+.then(data => {
+
+console.log(data)
+
+// Leaflet lee GeoJSON directamente
+L.geoJSON(data, {
+
+onEachFeature: function(feature, layer){
+
+layer.bindPopup(
+"Drillhole: " + feature.properties.drillhole
+)
+
+}
+
+}).addTo(map)
+
+})
+
+</script>
+
+</body>
+</html>
