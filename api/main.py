@@ -9,12 +9,14 @@ import json
 # DATABASE CONFIG
 # -----------------------------
 
+import os
+
 DB_CONFIG = {
-    "host": "localhost",
-    "port": 5433,
-    "database": "geoplatform",
-    "user": "postgres",
-    "password": "Elclubdelalady23"
+    "host": os.getenv("DB_HOST", "localhost"),
+    "port": os.getenv("DB_PORT", 5433),
+    "database": os.getenv("DB_NAME", "geoplatform"),
+    "user": os.getenv("DB_USER", "postgres"),
+    "password": os.getenv("DB_PASSWORD")
 }
 
 # -----------------------------
