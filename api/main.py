@@ -14,21 +14,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # -----------------------------
-# DATABASE CONFIG
-# -----------------------------
-
-DB_CONFIG = {
-    "host": os.getenv("DB_HOST", "localhost"),
-    "port": os.getenv("DB_PORT", 5433),
-    "dbname": os.getenv("DB_NAME", "geoplatform"),
-    "user": os.getenv("DB_USER", "postgres"),
-    "password": os.getenv("DB_PASSWORD")
-}
-
-# 👇 clave: default = require (para Supabase)
-DB_SSLMODE = os.getenv("DB_SSLMODE", "require")
-
-# -----------------------------
 # APP INIT
 # -----------------------------
 
@@ -56,11 +41,15 @@ app.add_middleware(
 
 def get_connection():
     try:
-        conn = psycopg2.connect(
-            **DB_CONFIG,
-            sslmode=DB_SSLMODE  # 🔥 FIX CLAVE
-        )
+        database_url = os.getenv("DATABASE_URL")
+
+        # 🔥 fallback para LOCAL si no existe DATABASE_URL
+        if not database_url:
+            database_url = "postgresql://postgres:postgres@localhost:5433/geoplatform"
+
+        conn = psycopg2.connect(database_url)
         return conn
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -220,14 +209,12 @@ def drillholes_geojson():
         if conn:
             conn.close()
 
-
+# -----------------------------
+# DEBUG (opcional)
+# -----------------------------
 
 @app.get("/debug-db")
 def debug_db():
     return {
-        "host": os.getenv("DB_HOST"),
-        "port": os.getenv("DB_PORT"),
-        "name": os.getenv("DB_NAME"),
-        "user": os.getenv("DB_USER"),
-        "sslmode": os.getenv("DB_SSLMODE")
+        "DATABASE_URL_set": bool(os.getenv("DATABASE_URL"))
     }
