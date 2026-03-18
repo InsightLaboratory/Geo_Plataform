@@ -4,22 +4,29 @@ from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 import psycopg2.extras
 import json
+import os
+from dotenv import load_dotenv
+
+# -----------------------------
+# LOAD ENV
+# -----------------------------
+
+load_dotenv()
 
 # -----------------------------
 # DATABASE CONFIG
 # -----------------------------
 
-import os
-from dotenv import load_dotenv
-load_dotenv()
-
 DB_CONFIG = {
     "host": os.getenv("DB_HOST", "localhost"),
     "port": os.getenv("DB_PORT", 5433),
-    "database": os.getenv("DB_NAME", "geoplatform"),
+    "dbname": os.getenv("DB_NAME", "geoplatform"),
     "user": os.getenv("DB_USER", "postgres"),
     "password": os.getenv("DB_PASSWORD")
 }
+
+# 👇 clave: default = require (para Supabase)
+DB_SSLMODE = os.getenv("DB_SSLMODE", "require")
 
 # -----------------------------
 # APP INIT
@@ -32,7 +39,7 @@ app = FastAPI(
 )
 
 # -----------------------------
-# CORS (para frontend / Leaflet)
+# CORS
 # -----------------------------
 
 app.add_middleware(
@@ -49,7 +56,10 @@ app.add_middleware(
 
 def get_connection():
     try:
-        conn = psycopg2.connect(**DB_CONFIG)
+        conn = psycopg2.connect(
+            **DB_CONFIG,
+            sslmode=DB_SSLMODE  # 🔥 FIX CLAVE
+        )
         return conn
     except Exception as e:
         raise HTTPException(
