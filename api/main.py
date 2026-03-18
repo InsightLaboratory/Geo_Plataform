@@ -219,3 +219,15 @@ def drillholes_geojson():
             cur.close()
         if conn:
             conn.close()
+
+
+
+@app.get("/debug-db")
+def debug_db():
+    return {
+        "host": os.getenv("DB_HOST"),
+        "port": os.getenv("DB_PORT"),
+        "name": os.getenv("DB_NAME"),
+        "user": os.getenv("DB_USER"),
+        "sslmode": os.getenv("DB_SSLMODE")
+    }
