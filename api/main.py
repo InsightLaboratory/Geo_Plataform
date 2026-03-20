@@ -249,35 +249,33 @@ def get_assays(
         base_query = """
             SELECT 
                 s.id AS sample_id,
-                lower(s.depth_interval) AS from_depth,
-                upper(s.depth_interval) AS to_depth,
-                a.element,
-                a.value,
-                CASE 
-                    WHEN a.element = 'Au' THEN a.value
-                    WHEN a.element = 'Cu' THEN a.value * 100
-                    ELSE a.value
-                END AS grade_normalized
+                lower(s.interval) AS from_depth,
+                upper(s.interval) AS to_depth,
+                COALESCE(e.symbol, 'Unknown') AS element,
+                ar.value,
+                ar.unit,
+                ar.is_below_detection
             FROM samples s
-            JOIN assays a ON s.id = a.sample_id
+            JOIN assay_results ar ON s.id = ar.sample_id
+            LEFT JOIN elements e ON ar.element_id = e.id
             WHERE s.drillhole_id = %s
         """
         
         params = [drillhole_id]
         
         if element:
-            base_query += " AND UPPER(a.element) = UPPER(%s)"
+            base_query += " AND UPPER(COALESCE(e.symbol, '')) = UPPER(%s)"
             params.append(element)
         
         if from_depth is not None:
-            base_query += " AND upper(s.depth_interval) >= %s"
+            base_query += " AND upper(s.interval) >= %s"
             params.append(from_depth)
         
         if to_depth is not None:
-            base_query += " AND lower(s.depth_interval) <= %s"
+            base_query += " AND lower(s.interval) <= %s"
             params.append(to_depth)
         
-        base_query += " ORDER BY from_depth, a.element"
+        base_query += " ORDER BY from_depth, e.symbol"
         
         cur.execute(base_query, params)
         rows = cur.fetchall()
@@ -300,12 +298,14 @@ def get_assays(
             },
             "data": [
                 {
-                    "sample_id": r["sample_id"],
+                    "sample_id": str(r["sample_id"]),
                     "from": float(r["from_depth"]),
                     "to": float(r["to_depth"]),
                     "interval_length": round(float(r["to_depth"]) - float(r["from_depth"]), 2),
                     "element": r["element"],
-                    "value": float(r["value"])
+                    "value": float(r["value"]),
+                    "unit": r["unit"],
+                    "below_detection": r["is_below_detection"]
                 }
                 for r in rows
             ]
@@ -355,23 +355,23 @@ def get_lithology(
         base_query = """
             SELECT 
                 s.id AS sample_id,
-                lower(s.depth_interval) AS from_depth,
-                upper(s.depth_interval) AS to_depth,
-                l.lithology_code,
-                l.lithology_description
+                lower(s.interval) AS from_depth,
+                upper(s.interval) AS to_depth,
+                COALESCE(l.lithology_code, 'Unknown') AS lithology_code,
+                COALESCE(l.lithology_description, 'Not classified') AS lithology_description
             FROM samples s
-            LEFT JOIN lithology l ON s.id = l.sample_id
+            LEFT JOIN lithology_intervals l ON s.id = l.sample_id
             WHERE s.drillhole_id = %s
         """
         
         params = [drillhole_id]
         
         if from_depth is not None:
-            base_query += " AND upper(s.depth_interval) >= %s"
+            base_query += " AND upper(s.interval) >= %s"
             params.append(from_depth)
         
         if to_depth is not None:
-            base_query += " AND lower(s.depth_interval) <= %s"
+            base_query += " AND lower(s.interval) <= %s"
             params.append(to_depth)
         
         base_query += " ORDER BY from_depth"
