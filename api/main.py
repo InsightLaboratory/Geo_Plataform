@@ -455,6 +455,7 @@ def drillhole_locations():
             features.append({
                 "type": "Feature",
                 "properties": {
+                    "drillhole_id": str(r["drillhole_id"]),
                     "hole_id": r["hole_id"],
                     "drillhole": r["drillhole_name"],
                     "max_depth": float(r["max_depth"])

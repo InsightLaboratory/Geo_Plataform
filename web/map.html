@@ -153,7 +153,12 @@
 
   <script>
 
+    // =============================
+    // API URL (Always Render)
+    // =============================
     const API_URL = "https://geo-plataform.onrender.com"
+
+    console.log("API URL:", API_URL)
 
     // =============================
     // INIT MAP
@@ -213,6 +218,11 @@
 
           onEachFeature: (feature, layer) => {
             const props = feature.properties
+            
+            // Extract coordinates from GeoJSON (format: [lng, lat])
+            const coords = feature.geometry.coordinates
+            const lat = coords[1]
+            const lng = coords[0]
 
             // Rich popup
             const popup = `
@@ -232,12 +242,12 @@
                   <tr>
                     <td style="padding: 5px; font-weight: bold;">Coord:</td>
                     <td style="padding: 5px; font-size: 11px;">
-                      ${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}
+                      ${lat.toFixed(4)}, ${lng.toFixed(4)}
                     </td>
                   </tr>
                 </table>
                 <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
-                  <a href="${API_URL}/drillholes/${props.hole_id}/assays" target="_blank" 
+                  <a href="${API_URL}/drillholes/${props.drillhole_id}/assays" target="_blank" 
                      style="color: #1f77b4; text-decoration: none; font-size: 11px;">
                     📊 Ver Assays →
                   </a>
