@@ -48,6 +48,7 @@ app.add_middleware(
         "https://geo-plataform.onrender.com",
         "https://geo-platform-cyan.vercel.app",
         "https://geo-platform-axhipqo2p-juanmanueltorres-creators-projects.vercel.app",
+        "https://geo-platform-h9ozmfvb7-juanmanueltorres-creators-projects.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
