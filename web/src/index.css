@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer components {
+  .geo-gradient {
+    @apply bg-gradient-to-r from-geo-primary to-geo-accent;
+  }
+}
+
+/* Leaflet dark mode overrides */
+html.dark .leaflet-container {
+  @apply bg-slate-800;
+}
+
+html.dark .leaflet-control-attribution {
+  @apply bg-slate-900 text-slate-400;
+}
+
+html.dark .leaflet-popup-content-wrapper {
+  @apply bg-slate-900 shadow-lg;
+}
+
+html.dark .leaflet-popup-tip {
+  @apply bg-slate-900;
+}
+
+html.dark .leaflet-popup-content {
+  @apply text-slate-50;
+}

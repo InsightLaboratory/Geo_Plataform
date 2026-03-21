@@ -13,9 +13,11 @@ Production-ready mineral exploration database and interactive geospatial API pla
 - **Connection Pooling:** psycopg2 SimpleConnectionPool (2-10 connections)
 
 **Frontend:**
-- **Map Framework:** Leaflet.js 1.9.4
-- **Basemap:** OpenStreetMap
-- **Real-time Data:** GeoJSON streaming from API
+- **Framework:** React 18 + TypeScript + Vite (v3.0)
+- **UI Library:** Shadcn/ui with Tailwind CSS
+- **Map:** React-Leaflet 4.2 + OpenStreetMap
+- **Charts:** Recharts
+- **Theming:** Dark Mode support
 
 **Architecture Goals:**
 - ✅ Exploration Data Platform
@@ -39,6 +41,7 @@ Synthetic Andean Au-dominant transitional system with real exploration data.
 |----------|--------|---------|
 | `/health` | GET | API health check |
 | `/drillholes` | GET | List all drillholes with pagination |
+| `/drillholes/{id}/summary` | GET | Drillhole summary (total_samples, avg_au, max_au) |
 | `/drillholes/{id}/assays` | GET | Assay results for drillhole (filterable by element, depth) |
 | `/drillholes/{id}/lithology` | GET | Lithology intervals for drillhole |
 | `/geospatial/drillhole-locations` | GET | GeoJSON features with drillhole coordinates |
@@ -70,16 +73,35 @@ Synthetic Andean Au-dominant transitional system with real exploration data.
 - **Assay Filtering:** `element=Au&from_depth=0&to_depth=100`
 - **CRS:** All spatial data in EPSG:4326
 
-## Web Interface
+## Web Interface (v3.0)
 
-**Interactive Map:** `https://geo-plataform.onrender.com/map.html` (Replace with actual domain)
+**Interactive Explorer:** React + Shadcn/ui with Dark Mode
 
-Features:
-- 🗺️ Real-time drillhole locations
-- 📍 Click popups with depth & coordinates
-- 📊 Direct links to assay endpoint
-- ⚡ Auto-zoom to data extent
-- 🔍 Responsive design
+### Features
+- 🗺️ Real-time drillhole locations (React-Leaflet)
+- 📍 Click popups with interactive data
+- 📊 Drillhole summary with Au statistics
+- 🌙 Dark/Light mode toggle
+- ⚡ Type-safe API integration (TypeScript)
+- 📱 Responsive design (Tailwind CSS)
+- 🎨 Modern UI with Shadcn/ui components
+
+### Getting Started
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Opens at `http://localhost:3000`
+
+### Build & Deploy
+
+```bash
+npm run build
+# Upload dist/ to hosting
+```
 
 ### Vertical system architecture
 
@@ -153,7 +175,21 @@ api/
   .python-version         # Python 3.11.9 (Render compatibility)
 
 web/
-  map.html               # Interactive Leaflet.js map
+  index.html             # React entry HTML
+  package.json           # Node dependencies (React, Vite, Shadcn/ui)
+  tsconfig.json          # TypeScript config
+  tailwind.config.js     # Tailwind CSS theming
+  vite.config.ts         # Vite build config
+  src/
+    ├── components/      # React components (UI, Map, Cards)
+    ├── pages/           # Page components
+    ├── hooks/           # Custom React hooks
+    ├── context/         # Theme context (Dark Mode)
+    ├── lib/             # API client, utils
+    ├── types/           # TypeScript interfaces
+    ├── App.tsx          # Root component
+    ├── main.tsx         # React entry point
+    └── index.css        # Tailwind + custom styles
 
 database/                # PostgreSQL schema (13 initialization scripts)
   00_Extensions.sql      # PostGIS, UUID generation
