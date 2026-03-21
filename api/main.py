@@ -44,6 +44,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "https://geo-plataform.onrender.com",
+        "https://geo-platform-cyan.vercel.app",
         "https://geo-platform-axhipqo2p-juanmanueltorres-creators-projects.vercel.app",
     ],
     allow_credentials=True,
